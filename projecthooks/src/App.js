@@ -32,20 +32,16 @@ function App() {
     clicks: 0
   }
 
-  const nameRef = React.useRef('name')
+  const nameRef = React.useRef()
   const [renderMemo, setRenderMemo] = React.useState(0)
   const [state, dispatch] = React.useReducer(reducer, initialValue);
 
+  React.useLayoutEffect(()=>{
+    console.log('Hello useLayoutEffect')
+  },[])
+
   React.useEffect(()=>{
-    (async () => {
-      await new Promise((resolve, reject) => {
-        resolve(console.log('Hello'))
-        reject('Bye')
-      })
-    })();
-    return(
-      'Bye Bye'
-    )
+    console.log('Hello useEffect')
   },[])
 
   function handleMinus(){
@@ -93,7 +89,10 @@ function App() {
         <button onClick={handleEqual}>=</button>
         <Plus onClick={handlePlus}>+</Plus>
         <br/>
-        <span>{nameRef.current}</span>
+        {
+          nameRef &&
+          <span>{nameRef.current.value}</span>
+        }
         <br/>
         <input ref={nameRef} />
         <button onClick={handlePrintName}>Print Name</button>
