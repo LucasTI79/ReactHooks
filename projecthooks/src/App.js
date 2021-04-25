@@ -78,6 +78,12 @@ function App() {
     formRef.current.submit()
   }
 
+  const [loading, response] = useFetch('https://api.github.com/users/LucasTI79')
+  
+  if(loading){
+    return <h1>loading...</h1>
+  }
+
   return (
     <ThemeProvider>
       <div className="App">
@@ -89,10 +95,6 @@ function App() {
         <button onClick={handleEqual}>=</button>
         <Plus onClick={handlePlus}>+</Plus>
         <br/>
-        {
-          nameRef &&
-          <span>{nameRef.current.value}</span>
-        }
         <br/>
         <input ref={nameRef} />
         <button onClick={handlePrintName}>Print Name</button>
@@ -133,5 +135,20 @@ const Form = React.forwardRef((props, ref) => {
     </form>
   )
 })
+
+function useFetch(url){
+  const [loading, setLoading] = React.useState(true)
+  const [response, setResponse] = React.useState(null)
+  React.useEffect(() => {
+    (async ()=> {
+      const resp = await fetch(url);
+      const json = await resp.json();
+      setLoading(false)
+      setResponse(json)
+    })();
+  },[url])
+
+  return [loading, response]
+}
 
 export default App;
