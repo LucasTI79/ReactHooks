@@ -1,13 +1,14 @@
 import React from 'react'
 import './App.css';
 import Button from './components/Button';
-import ThemeProvider, { useTheme } from './contexts/ThemeContext'
+import ThemeProvider from './contexts/ThemeContext'
 
 const fnPlusCounter = new Set()
 
 const fnMinusCounter = new Set()
 
 function App() {
+  console.log('rendered')
   function reducer(state, action){
     switch(action.type){
       case 'plus':
@@ -31,7 +32,7 @@ function App() {
     clicks: 0
   }
 
-  const [name, setName] =  React.useState('')
+  const nameRef = React.useRef('name')
   const [renderMemo, setRenderMemo] = React.useState(0)
   const [state, dispatch] = React.useReducer(reducer, initialValue);
 
@@ -70,6 +71,17 @@ function App() {
     setRenderMemo(prev => prev+1)
   }
 
+  function handlePrintName(){
+    alert(nameRef.current.value)
+    nameRef.current.focus()
+  }
+
+  const formRef = React.useRef(null)
+
+  function handleSubmit(){
+    formRef.current.submit()
+  }
+
   return (
     <ThemeProvider>
       <div className="App">
@@ -80,13 +92,17 @@ function App() {
         <button disabled={!state.counter && true} onClick={handleMinus}>-</button>
         <button onClick={handleEqual}>=</button>
         <Plus onClick={handlePlus}>+</Plus>
-
         <br/>
-        <span>{name}</span>
+        <span>{nameRef.current}</span>
         <br/>
-        <input onChange={e => setName(e.target.value)} />
+        <input ref={nameRef} />
+        <button onClick={handlePrintName}>Print Name</button>
         <br/>
         <Button onClick={() => {}}>Mudar tema</Button>
+        <br/>
+        <br/>
+        <Form ref={formRef}/>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </ThemeProvider>
   );
@@ -99,5 +115,24 @@ function Plus(props){
     </button>
   )
 }
+
+const Form = React.forwardRef((props, ref) => {
+  const inputRef = React.useRef(null)
+
+  function handleSubmit(){
+    alert(inputRef.current.value)
+  }
+
+  React.useImperativeHandle(ref, () => {
+    return {
+      submit: handleSubmit
+    }
+  },[])
+  return(
+    <form>
+      <input ref={inputRef} />
+    </form>
+  )
+})
 
 export default App;
