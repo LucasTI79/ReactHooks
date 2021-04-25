@@ -144,11 +144,15 @@ function useFetch(url){
       const resp = await fetch(url);
       const json = await resp.json();
       setLoading(false)
-      setResponse(json)
+      setResponse({ json, status: resp.status })
     })();
   },[url])
 
-  return [loading, response]
+  React.useDebugValue('label', (message) => {
+    return `Status: ${message}`
+  })
+
+  return [loading, response?.json]
 }
 
 export default App;
